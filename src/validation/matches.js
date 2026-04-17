@@ -18,11 +18,11 @@ export const matchIdParamSchema = z.object({
 });
 
 // Helper to validate ISO date string (uses Date.parse to verify parsable ISO string)
-const isValidIsoDateString = (value) => {
-  if (typeof value !== 'string') return false;
-  const time = Date.parse(value);
-  return !Number.isNaN(time);
-};
+// Schema for creating a match
+export const createMatchSchema = z
+  .object({
+    startTime: z.string().datetime(),
+    endTime: z.string().datetime(),
 
 // Schema for creating a match
 export const createMatchSchema = z
