@@ -3,7 +3,14 @@ import arcjet, { detectBot, shield, slidingWindow } from "@arcjet/node";
 const arcjetKey = process.env.ARCJET_KEY;
 const arcjetMode = process.env.ARCJET_MODE === 'DRY_RUN' ? 'DRY_RUN' : 'LIVE';
 
-if(!arcjetKey) throw new Error(' ARCJET_KEY in environment variables is missing');
+// arcjetKey is optional; when absent we export null for httpArcjet/wsArcjet
+
+if (!arcjetKey) {
+  // Informative log for local/dev environments where Arcjet is intentionally disabled
+  console.info('[arcjet] disabled — ARCJET_KEY not set; HTTP and WS protections are no-ops.');
+} else {
+  console.info(`[arcjet] enabled (mode=${arcjetMode})`);
+}
 
 export const httpArcjet = arcjetKey
   ? arcjet({
@@ -32,6 +39,9 @@ export const wsArcjet = arcjetKey
       ],
     })
   : null;
+
+if (httpArcjet) console.info('[arcjet] httpArcjet initialized');
+if (wsArcjet) console.info('[arcjet] wsArcjet initialized');
 
   export function securityMiddleware() {
     return async (req, res, next) => {
